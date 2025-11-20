@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: | 
           python -m pip install --upgrade pip
-          pip install -r tp1-ia-tests/requirements.txt
+          pip install -r requirements.txt
 
       - name: Setup Node
         uses: actions/setup-node@v4
