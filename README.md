@@ -446,7 +446,7 @@ python monitoring/prometheus_exporter.py
 # Grafana: http://localhost:3000 (admin/admin)
 
 # Vérifier que Prometheus scrape les métriques
-# Aller sur http://localhost:9090/targets
+# Aller sur http://localhost:9090/targets // U ARE HERRRRRRREEEEEE
 ```
 
 ### 🧪 Résultat attendu

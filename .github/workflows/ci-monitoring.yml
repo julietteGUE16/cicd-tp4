@@ -1,0 +1,68 @@
+name: CI - Tests avec Allure et Monitoring
+
+on:
+  push:
+    branches: [ juliette-deploy ]
+  pull_request:
+    branches: [ juliette-deploy ]
+
+jobs:
+    test-and-analyze:
+      name: Tests + Analyse IA
+      runs-on: ubuntu-latest
+    
+      strategy:
+        matrix:
+          python-version: ['3.11']
+
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+
+        - name: python
+          uses: actions/setup-python@v4
+          with:
+            python-version: ${{ matrix.python-version }}
+            cache: 'pip'
+
+        - name: Install dependencies
+          run: | 
+            python -m pip install --upgrade pip
+            pip install -r tp1-ia-tests/requirements.txt
+
+        - name: Setup Node
+          uses: actions/setup-node@v4
+
+        - name : allure command
+          run: npm install -g allure-commandline
+
+        - name : check allure version
+          run : allure --version
+
+        - name: Génération des tests IA
+          run: |
+            echo "Exécution des tests et collecte des données..."
+            pytest tests/ -v --alluredir=reports
+          continue-on-error: true
+        
+        - name: Exec des tests visuels
+          if: always()
+          run: |
+            echo " transformation des données JSON Allure en un rapport HTML..."
+            allure generate reports --clean -o allure-report
+
+        - name: Upload des rapports de tests
+          if: always()
+          uses: actions/upload-artifact@v4
+          with:
+            name: allure-results
+            path: reports/
+            retention-days: 30
+        
+        - name: Upload des screenshots
+          if: always()
+          uses: actions/upload-artifact@v4
+          with:
+            name: allure-html-report
+            path: allure-report/
+            retention-days: 30
